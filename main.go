@@ -41,8 +41,8 @@ func init() {
 }
 
 func main() {
-	// receive the name of the bucket as a flag parameter (default: bucketName)
-	bucketNamePtr := flag.String("bucket", "bucketName", "the name of the bucket")
+	// get bucket name from command line arguments
+	bucketNamePtr := flag.String("b", "bucketName", "the name of the bucket")
 	flag.Parse()
 
 	fmt.Printf("bucket name: %s\n", *bucketNamePtr)
