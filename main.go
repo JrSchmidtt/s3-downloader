@@ -24,7 +24,6 @@ func init() {
 	secretKey := os.Getenv("AWS_SECRET_ACCESS_KEY")
 	region = os.Getenv("AWS_REGION")
 
-	// Configure AWS session to use the custom HTTP client
 	awsConfig := &aws.Config{
 		Region:      aws.String(region),
 		Credentials: credentials.NewStaticCredentials(accessKey, secretKey, ""),
@@ -35,8 +34,6 @@ func init() {
 		fmt.Printf("error while creating session: %v\n", err)
 		os.Exit(1)
 	}
-
-	// Create an S3 client with the configured session
 	s3Client = s3.New(session)
 }
 
@@ -47,12 +44,10 @@ func main() {
 
 	fmt.Printf("bucket name: %s\n", *bucketNamePtr)
 
-	// list objects in the bucket
 	listObjectsInput := &s3.ListObjectsInput{
 		Bucket: aws.String(*bucketNamePtr),
 	}
 
-	// list objects in the bucket
 	listObjectsOutput, err := s3Client.ListObjects(listObjectsInput)
 	if err != nil {
 		fmt.Printf("error while listing objects: %v\n", err)
@@ -74,7 +69,6 @@ func main() {
 			}
 		}
 
-
 		fmt.Printf("downloading object: %s\n", aws.StringValue(object.Key))
 
 		// download object
@@ -86,14 +80,13 @@ func main() {
 		getObjectOutput, err := s3Client.GetObject(getObjectInput)
 		if err != nil {
 			fmt.Printf("error while getting object: %v\n", err)
-			continue // Skip to the next iteration if there's an error
+			continue
 		}
-		defer getObjectOutput.Body.Close() // Ensure closing the response body
+		defer getObjectOutput.Body.Close()
 
-		// create folder with the name of the bucket, if it doesn't exist
 		if err := os.MkdirAll(bucketFolder, 0755); err != nil {
 			fmt.Printf("error while creating folder: %v\n", err)
-			continue // Skip to the next iteration if there's an error
+			continue
 		}
 
 		// create file inside the bucket folder using sanitized object key
@@ -102,7 +95,7 @@ func main() {
 		file, err := os.Create(filePath)
 		if err != nil {
 			fmt.Printf("error while creating file: %v\n", err)
-			continue // Skip to the next iteration if there's an error
+			continue
 		}
 		defer file.Close() // Ensure closing the file
 
@@ -110,11 +103,9 @@ func main() {
 		_, err = io.Copy(file, getObjectOutput.Body)
 		if err != nil {
 			fmt.Printf("error while writing to file: %v\n", err)
-			continue // Skip to the next iteration if there's an error
+			continue 
 		}
-
 		fmt.Printf("object downloaded successfully: %s\n", aws.StringValue(object.Key))
 	}
-
 	fmt.Println("done")
 }
