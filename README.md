@@ -15,6 +15,13 @@ This script is designed to list objects in a specified AWS S3 bucket and downloa
 
 ## installation
 
+Create .env file based on .env.sample and fill in the values with command:
+
+```bash
+cp .env.sample .env
+```
+
+Install dependencies with command:
 ```bash
 go mod download
 ```
